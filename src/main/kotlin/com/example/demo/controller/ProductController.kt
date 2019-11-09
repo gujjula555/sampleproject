@@ -13,14 +13,14 @@ import javax.websocket.server.PathParam
 class ProductController {
 
 
-    val productList = arrayListOf(
+    val productDB = arrayListOf(
             Product("B001", "Emilia"),
             Product("B002", "Andy")
     )
 
     @GetMapping("/{id}")
     fun getProduct(@PathVariable("id") id: String): ResponseEntity<Product> {
-        var productOp: Optional<Product> = productList.stream()
+        var productOp: Optional<Product> = productDB.stream()
                 .filter {
                     it.id == id
                 }.findFirst()
@@ -34,14 +34,14 @@ class ProductController {
 
     @PostMapping
     fun createProduct(@RequestBody request: Product): ResponseEntity<Product> {
-        var isIdDuplicate = productList.stream().anyMatch {
+        var isIdDuplicate = productDB.stream().anyMatch {
             it.id == request.id
         }
         if (isIdDuplicate) {
             return ResponseEntity.unprocessableEntity().build()
         }
         val product = Product(request.id, request.name)
-        productList.add(product)
+        productDB.add(product)
 
         val uri = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -57,19 +57,19 @@ class ProductController {
             @RequestBody request: Product
     ): ResponseEntity<Product> {
         println("YES")
-        val productOp = productList.stream()
+        val productOp = productDB.stream()
                 .filter {
-                    it.id == request.id
+                    it.id == id
                 }.findFirst()
         if (!productOp.isPresent) {
             return ResponseEntity.notFound().build()
         }
         val oldProduct = productOp.get()
         val product = Product()
-        val index = productList.indexOf(oldProduct)
+        val index = productDB.indexOf(oldProduct)
         product.id = oldProduct.id
         product.name = request.name
-        productList[index] = product
+        productDB[index] = product
         return ResponseEntity.ok(product)
     }
 
@@ -79,15 +79,27 @@ class ProductController {
             @PathVariable("id") id: String
     ): ResponseEntity<Product> {
 
-        val productOp = productList.stream()
+        val productOp = productDB.stream()
                 .filter {
                     it.id == id
                 }.findFirst()
 
         if (productOp.isPresent) {
-            productList.remove(productOp.get())
+            productDB.remove(productOp.get())
         }
 
         return ResponseEntity.noContent().build()
+    }
+
+    @RequestMapping(method = [RequestMethod.GET])
+    fun getProductByKeyword(
+            @RequestParam(value = "keyword")
+            keyword : String
+    ):ResponseEntity<List<Product>>{
+        val products = productDB.stream()
+                .filter {
+                    it.id.contains(keyword)
+                }.collect(Collectors.toList())
+        return ResponseEntity.ok(products)
     }
 }
