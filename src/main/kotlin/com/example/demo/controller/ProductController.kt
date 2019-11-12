@@ -40,7 +40,7 @@ class ProductController {
                 .buildAndExpand(product.id)
                 .toUri()
 
-        return ResponseEntity.created(uri).build()
+        return ResponseEntity.created(uri).body(product)
     }
 
     @PutMapping("/{id}")

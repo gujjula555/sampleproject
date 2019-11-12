@@ -34,6 +34,9 @@ dependencies {
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
 		exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
 	}
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+	testImplementation("org.springframework.boot:spring-boot-starter-test:2.2.1.RELEASE")
+
 }
 
 tasks.withType<Test> {
