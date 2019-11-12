@@ -12,6 +12,7 @@ group = "com.example"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_1_8
 
+
 repositories {
 	mavenCentral()
 }
@@ -26,6 +27,8 @@ dependencies {
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-gradle-plugin
 	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-autoconfigure
 	implementation("org.springframework.boot:spring-boot-autoconfigure:2.2.0.RELEASE")
+	// https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb
+	implementation("org.springframework.boot:spring-boot-starter-data-mongodb:2.2.1.RELEASE")
 
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test") {
@@ -43,6 +46,7 @@ tasks.withType<KotlinCompile> {
 		jvmTarget = "1.8"
 	}
 }
+
 
 
 
