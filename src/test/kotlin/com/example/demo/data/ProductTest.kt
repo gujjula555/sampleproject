@@ -2,10 +2,10 @@ package com.example.demo.data
 
 import com.example.demo.exception.NotFoundException
 import com.example.demo.repository.ProductRepository
-import com.jayway.jsonpath.JsonPath
-import jdk.incubator.http.HttpResponse
 import net.minidev.json.JSONObject
+import org.hamcrest.Matchers.hasSize
 import org.junit.After
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -13,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.RequestBuilder
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.*
@@ -42,7 +42,7 @@ class ProductTest {
     }
 
     @Test
-    fun getProductText() {
+    fun getProductTest() {
         val product = Product(name = "Flutter", price = 1500)
         productRepository.insert(product)
         val id = productRepository.findByName(product.name).id
@@ -54,7 +54,6 @@ class ProductTest {
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.name").value(product.name))
                 .andExpect(jsonPath("$.price").value(product.price))
-
     }
 
     @Test
@@ -67,7 +66,7 @@ class ProductTest {
                 .headers(httpHeaders)
                 .content(request.toString())
 
-        mockMvc.perform(requestBuilder)
+        val result = mockMvc.perform(requestBuilder)
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().isCreated)
                 .andExpect(jsonPath("$.id").hasJsonPath())
@@ -75,6 +74,21 @@ class ProductTest {
                 .andExpect(jsonPath("$.price").value(request["price"].toString().toInt()))
                 .andExpect(header().exists("Location"))
                 .andExpect(header().string("Content-Type", "application/json"))
+                .andReturn()
+
+        val response = result.response
+        val resBody = org.json.JSONObject(response.contentAsString)
+        val productId = resBody.getString("id")
+        Assert.assertNotNull(productId.isNotEmpty())
+        Assert.assertEquals(productId, productRepository.findByName(request["name"].toString()).id)
+        Assert.assertEquals(resBody.getString("name"), request["name"].toString())
+        Assert.assertEquals(resBody.getInt("price"), request["price"].toString().toInt())
+
+        Assert.assertEquals(HttpStatus.CREATED.value(), response.status)
+        Assert.assertEquals("application/json",
+                response.contentType);
+        Assert.assertEquals(result.request.requestURL.toString() + "/" + productId,
+                response.getHeader("Location"));
     }
 
     @Test
@@ -117,6 +131,32 @@ class ProductTest {
         productRepository.findById(id)
                 .orElseThrow(NotFoundException())
     }
+
+    @Test
+    fun getProductsSortByPriceAscTest() {
+        val p1 = Product(name = "Spring Course", price = 1500)
+        val p2 = Product(name = "FireBase Course", price = 1000)
+        val p3 = Product(name = "Google Cloud Platform Course", price = 3500)
+        val p4 = Product(name = "Microsoft Azure Course", price = 2500)
+        val p5 = Product(name = "DB2 Guide", price = 500)
+
+        productRepository.insert(listOf(p1, p2, p3, p4, p5))
+
+        val requestBuilders = MockMvcRequestBuilders.get("/products")
+                .param("keyword", "Course")
+                .param("orderBy", "price")
+                .param("sortRule", "asc")
+
+        mockMvc.perform(requestBuilders)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isOk)
+                .andExpect(jsonPath("$", hasSize<Int>(4)))
+                .andExpect(jsonPath("$[0].id").value(productRepository.findByName(p2.name).id))
+                .andExpect(jsonPath("$[1].id").value(productRepository.findByName(p1.name).id))
+                .andExpect(jsonPath("$[2].id").value(productRepository.findByName(p4.name).id))
+                .andExpect(jsonPath("$[3].id").value(productRepository.findByName(p3.name).id))
+    }
+
 
     @After
     fun clear() {

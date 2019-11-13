@@ -22,8 +22,8 @@ class ProductService {
     }
 
     fun createProduct(request: Product): Product {
-
-        return this.productRepository.insert(request)
+        productRepository.insert(request)
+        return productRepository.findByName(request.name)
     }
 
     fun updateProduct(id: String, request: Product): Product {
