@@ -12,4 +12,5 @@ interface ProductRepository : MongoRepository<Product, String> {
 
     fun findByNameLike(name: String, sort: Sort): List<Product>
 
+    fun findByName(name: String): Product
 }
