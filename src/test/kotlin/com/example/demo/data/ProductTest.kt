@@ -92,6 +92,38 @@ class ProductTest {
     }
 
     @Test
+    fun createProductWithoutNameTest() {
+        val jsonObject = JSONObject()
+        jsonObject["price"] = 400
+
+        val requestBuilders = MockMvcRequestBuilders.post("/products")
+                .headers(httpHeaders)
+                .content(jsonObject.toString())
+
+        mockMvc.perform(requestBuilders)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
+    fun updateProductWithNegativePrice() {
+        val product = Product(name = "Python Flask", price = 2100)
+        productRepository.insert(product)
+        val productId = productRepository.findByName(product.name).id
+
+        val jsonObject = JSONObject()
+        jsonObject["price"] = -500
+
+        val requestBuilders = MockMvcRequestBuilders.put("/products/$productId")
+                .headers(httpHeaders)
+                .content(jsonObject.toString())
+
+        mockMvc.perform(requestBuilders)
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isBadRequest)
+    }
+
+    @Test
     fun updateProductTest() {
 
         val product = Product(name = "", price = 3000)
