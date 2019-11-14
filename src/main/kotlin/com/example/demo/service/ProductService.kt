@@ -1,5 +1,6 @@
 package com.example.demo.service
 
+import ProductRequest
 import com.example.demo.data.Product
 import com.example.demo.data.ProductQueryParameter
 import com.example.demo.exception.NotFoundException
@@ -21,18 +22,21 @@ class ProductService {
                 .orElseThrow(NotFoundException("Product Not Found"))
     }
 
-    fun createProduct(request: Product): Product {
-        productRepository.insert(request)
-        return productRepository.findByName(request.name)
+    fun createProduct(request: ProductRequest): Product {
+        val product = Product()
+        product.name = request.name!!
+        product.price = request.price!!
+        productRepository.insert(product)
+        return productRepository.findByName(product.name)
     }
 
-    fun updateProduct(id: String, request: Product): Product {
+    fun updateProduct(id: String, request: ProductRequest): Product {
 
         val oldProduct = getProduct(id)
         val product = Product()
         product.id = oldProduct.id
-        product.name = request.name
-        product.price = request.price
+        product.name = request.name!!
+        product.price = request.price!!
         return productRepository.save(product)
     }
 

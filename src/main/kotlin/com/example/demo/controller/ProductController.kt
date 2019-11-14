@@ -1,19 +1,14 @@
 package com.example.demo.controller
 
+import ProductRequest
 import com.example.demo.data.Product
 import com.example.demo.data.ProductQueryParameter
-import com.example.demo.database.ProductDataBase.Companion.productDB
-import com.example.demo.exception.NotFoundException
 import com.example.demo.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder
-import java.util.*
-import java.util.function.Supplier
-import java.util.stream.Collectors
-import javax.websocket.server.PathParam
-import kotlin.Comparator
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/products")
@@ -31,7 +26,11 @@ class ProductController {
 
 
     @PostMapping
-    fun createProduct(@RequestBody request: Product): ResponseEntity<Product> {
+    fun createProduct(
+            @RequestBody
+            @Valid
+            request: ProductRequest
+    ): ResponseEntity<Product> {
 
         val product = productService.createProduct(request)
 
@@ -46,7 +45,8 @@ class ProductController {
     @PutMapping("/{id}")
     fun updateProduct(
             @PathVariable("id") id: String,
-            @RequestBody request: Product
+            @Valid
+            @RequestBody request: ProductRequest
     ): ResponseEntity<Product> {
         val product = productService.updateProduct(id, request)
         return ResponseEntity.ok(product)
