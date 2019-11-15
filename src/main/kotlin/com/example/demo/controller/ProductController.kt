@@ -1,8 +1,8 @@
 package com.example.demo.controller
 
 import ProductRequest
-import com.example.demo.data.Product
-import com.example.demo.data.ProductQueryParameter
+import com.example.demo.entity.Product
+import com.example.demo.entity.ProductQueryParameter
 import com.example.demo.service.ProductService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity

@@ -1,6 +1,6 @@
 package com.example.demo.database
 
-import com.example.demo.data.Product
+import com.example.demo.entity.Product
 
 class ProductDataBase {
 

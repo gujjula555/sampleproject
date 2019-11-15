@@ -1,4 +1,4 @@
-package com.example.demo.data
+package com.example.demo.entity
 
 import com.example.demo.exception.NotFoundException
 import com.example.demo.repository.ProductRepository

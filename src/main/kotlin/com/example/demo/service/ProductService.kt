@@ -1,8 +1,8 @@
 package com.example.demo.service
 
 import ProductRequest
-import com.example.demo.data.Product
-import com.example.demo.data.ProductQueryParameter
+import com.example.demo.entity.Product
+import com.example.demo.entity.ProductQueryParameter
 import com.example.demo.exception.NotFoundException
 import com.example.demo.repository.ProductRepository
 import org.springframework.beans.factory.annotation.Autowired

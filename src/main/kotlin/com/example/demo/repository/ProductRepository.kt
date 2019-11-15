@@ -1,6 +1,6 @@
 package com.example.demo.repository
 
-import com.example.demo.data.Product
+import com.example.demo.entity.Product
 import org.springframework.data.domain.Sort
 import org.springframework.data.mongodb.repository.MongoRepository
 
