@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+</head>
+
+<form action="/member" method="post">
+    <input type="text" name="lastName" placeholder="姓氏">
+    <input type="text" name="firstName" placeholder="名字">
+    <input type="text" name="telephoneOrEmail" placeholder="手機號碼或電子郵件">
+    <input type="text" name="password" placeholder="設定密碼">
+    <div>生日</div>
+    <select name="birthday_year">
+        <option>1</option>
+        <option>2</option>
+        <option>3</option>
+        <option>4</option>
+        <option>5</option>
+        <option>6</option>
+        <option>7</option>
+        <option>8</option>
+    </select>
+    <select name="birthday_month"></select>
+    <select name="birthday_day"></select>
+
+    <div>性別</div>
+    男
+    <input type="radio" name="sex"  value=1>
+    女
+    <input type="radio" name="sex" placeholder="女" value=-1>
+
+    <button type="submit">註冊</button>
+</form>
+</html>
